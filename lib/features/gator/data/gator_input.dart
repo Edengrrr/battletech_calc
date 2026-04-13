@@ -134,4 +134,40 @@ class GatorInput {
     this.heatModifier = HeatModifier.none,
     this.otherModifier = 0,
   });
+
+  // Creates a copy of this input with specific fields replaced.
+  // This allows the UI to update one field at a time without rewriting all fields.
+  GatorInput copyWith({
+    int? gunnerySkill,
+    AttackerMovement? attackerMovement,
+    int? targetHexesMoved,
+    TargetMovementAdditional? targetMovementAdditional,
+    RangeBracket? rangeBracket,
+    MinimumRange? minimumRange,
+    WoodsSmoke? woodsSmoke,
+    bool? targetPartialCover,
+    TargetProne? targetProne,
+    bool? attackerProne,
+    SecondaryTarget? secondaryTarget,
+    ArmCritical? armCritical,
+    HeatModifier? heatModifier,
+    int? otherModifier,
+  }) {
+    return GatorInput(
+      gunnerySkill: gunnerySkill ?? this.gunnerySkill,
+      attackerMovement: attackerMovement ?? this.attackerMovement,
+      targetHexesMoved: targetHexesMoved ?? this.targetHexesMoved,
+      targetMovementAdditional: targetMovementAdditional ?? this.targetMovementAdditional,
+      rangeBracket: rangeBracket ?? this.rangeBracket,
+      minimumRange: minimumRange ?? this.minimumRange,
+      woodsSmoke: woodsSmoke ?? this.woodsSmoke,
+      targetPartialCover: targetPartialCover ?? this.targetPartialCover,
+      targetProne: targetProne ?? this.targetProne,
+      attackerProne: attackerProne ?? this.attackerProne,
+      secondaryTarget: secondaryTarget ?? this.secondaryTarget,
+      armCritical: armCritical ?? this.armCritical,
+      heatModifier: heatModifier ?? this.heatModifier,
+      otherModifier: otherModifier ?? this.otherModifier,
+    );
+  }
 }
