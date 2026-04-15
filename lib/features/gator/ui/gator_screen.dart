@@ -29,8 +29,8 @@ class _GatorScreenState extends ConsumerState<GatorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('GATOR')),
-      body: Column(
+      body: SafeArea(
+        child: Column(
         children: [
           // GatorHeader displays the G-A-T-O-R letter circles, their current
           // modifier values, and the total to-hit number.
@@ -79,6 +79,7 @@ class _GatorScreenState extends ConsumerState<GatorScreen> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

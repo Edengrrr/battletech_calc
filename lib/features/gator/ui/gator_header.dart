@@ -4,7 +4,18 @@ import 'package:battletech_calc/features/gator/logic/gator_provider.dart';
 
 // Enum representing which GATOR letter is currently selected.
 // Used by GatorScreen to determine which input panel to display.
-enum GatorSection { g, a, t, o, r }
+// fullName is shown inside the circle when that section is active.
+enum GatorSection {
+  g, a, t, o, r;
+
+  String get fullName => switch (this) {
+    GatorSection.g => 'Gunnery',
+    GatorSection.a => 'Attacker',
+    GatorSection.t => 'Target',
+    GatorSection.o => 'Other',
+    GatorSection.r => 'Range',
+  };
+}
 
 // GatorHeader displays the full top section of the GATOR calculator screen:
 //   - A row of tappable letter circles (G, A, T, O, R)
@@ -55,14 +66,17 @@ class GatorHeader extends ConsumerWidget {
           children: GatorSection.values.map((section) {
             final index = section.index;
             final isSelected = selected == section;
-            final label = section.name.toUpperCase();
+            // Show the full section name when active, letter when inactive.
+            final label = isSelected
+                ? section.fullName
+                : section.name.toUpperCase();
 
             return Expanded(
               child: GestureDetector(
                 onTap: () => onSectionTap(section),
                 child: Column(
                   children: [
-                    // Large letter circle — highlighted when this section is active.
+                    // Large letter circle — shows full name when active.
                     _Circle(label: label, highlighted: isSelected),
                     const SizedBox(height: 4),
                     // Small value circle — shows the current modifier for this section.
@@ -157,15 +171,21 @@ class _Circle extends StatelessWidget {
             : Theme.of(context).colorScheme.surfaceContainerHighest,
         border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
-      child: Center(
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: small ? 14 : 22,
-            fontWeight: FontWeight.bold,
-            color: highlighted
-                ? Theme.of(context).colorScheme.onPrimary
-                : Theme.of(context).colorScheme.onSurface,
+      // FittedBox scales the text down automatically if it's too wide for the
+      // circle — needed when the full section name is shown on selection.
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: small ? 14 : 22,
+              fontWeight: FontWeight.bold,
+              color: highlighted
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
       ),

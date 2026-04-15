@@ -23,7 +23,7 @@ class GPanel extends ConsumerWidget {
           Text('Gunnery Skill', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Text(
-            "Your pilot's gunnery skill from their record sheet. ",
+            "Attacking pilot's gunnery skill from their record sheet.",
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 16),
@@ -48,9 +48,16 @@ class GPanel extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            "Your pilot's piloting skill from their record sheet. "
-            'Used for melee attacks (punch/kick)',
+            "Attacking pilot's piloting skill from their record sheet.",
             style: Theme.of(context).textTheme.bodySmall,
+          ),
+          Text(
+            '* Used for melee attacks (punch/kick)',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontStyle: FontStyle.italic,
+              fontSize:
+                  (Theme.of(context).textTheme.bodySmall?.fontSize ?? 12) - 1,
+            ),
           ),
           const SizedBox(height: 16),
           SelectorRow<int>(
@@ -73,9 +80,16 @@ class GPanel extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            "The target's piloting skill from their record sheet. "
-            'Stored for future calculations.',
+            "Target pilot's piloting skill from their record sheet.",
             style: Theme.of(context).textTheme.bodySmall,
+          ),
+          Text(
+            '* Used for charge attacks and death from above',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontStyle: FontStyle.italic,
+              fontSize:
+                  (Theme.of(context).textTheme.bodySmall?.fontSize ?? 12) - 1,
+            ),
           ),
           const SizedBox(height: 16),
           SelectorRow<int>(
