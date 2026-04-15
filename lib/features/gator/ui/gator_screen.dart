@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:battletech_calc/features/gator/logic/gator_provider.dart';
 import 'package:battletech_calc/features/gator/ui/gator_header.dart';
+import 'package:battletech_calc/features/gator/ui/panels/g_panel.dart';
 
 // GatorScreen is the main screen for the GATOR to-hit calculator.
 // It uses ConsumerStatefulWidget instead of ConsumerWidget because it needs
@@ -44,10 +45,8 @@ class _GatorScreenState extends ConsumerState<GatorScreen> {
           // Visual separator between the header and the input panel.
           const Divider(height: 1),
 
-          // The input panel fills all remaining vertical space.
-          // Content here will be replaced with the actual input widgets
-          // for whichever GATOR section is currently selected.
-          const Expanded(child: Center(child: Text('Input panel coming soon'))),
+          // Shows the input panel for the currently selected GATOR section.
+          Expanded(child: _buildPanel(_selected)),
 
           // Reset button clears all inputs back to their defaults.
           // ref.read is used here instead of ref.watch because we only need
@@ -63,5 +62,18 @@ class _GatorScreenState extends ConsumerState<GatorScreen> {
         ],
       ),
     );
+  }
+
+  // Returns the appropriate input panel widget for the selected GATOR section.
+  Widget _buildPanel(GatorSection section) {
+    switch (section) {
+      case GatorSection.g:
+        return const GPanel();
+      case GatorSection.a:
+      case GatorSection.t:
+      case GatorSection.o:
+      case GatorSection.r:
+        return const Center(child: Text('Coming soon'));
+    }
   }
 }

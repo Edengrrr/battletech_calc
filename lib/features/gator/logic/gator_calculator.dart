@@ -30,18 +30,38 @@ int targetMovementModifier(int hexesMoved) {
 //
 // The result can legally exceed 12 — display it as-is per game rules.
 int calculateToHit(GatorInput input) {
-  return input.gunnerySkill +                              // G
-      input.attackerMovement.modifier +                    // A
-      targetMovementModifier(input.targetHexesMoved) +     // T (hex table)
-      input.targetMovementAdditional.modifier +            // T (jumped/sprinted)
-      input.rangeBracket.modifier +                        // R (bracket)
-      input.minimumRange.modifier +                        // R (minimum range penalty)
-      input.woodsSmoke.modifier +                          // O
-      (input.targetPartialCover ? 1 : 0) +                 // O
-      input.targetProne.modifier +                         // O
-      (input.attackerProne ? 2 : 0) +                      // O
-      input.secondaryTarget.modifier +                     // O
-      input.armCritical.modifier +                         // O
-      input.heatModifier.modifier +                        // O
-      input.otherModifier;                                 // O (free entry)
+  return input.gunnerySkill + // G
+      input.attackerMovement.modifier + // A
+      targetMovementModifier(input.targetHexesMoved) + // T (hex table)
+      input.targetMovementAdditional.modifier + // T (jumped/sprinted)
+      input.rangeBracket.modifier + // R (bracket)
+      input.minimumRange.modifier + // R (minimum range penalty)
+      input.woodsSmoke.modifier + // O
+      (input.targetPartialCover ? 1 : 0) + // O
+      input.targetProne.modifier + // O
+      (input.attackerProne ? 2 : 0) + // O
+      input.secondaryTarget.modifier + // O
+      input.armCritical.modifier + // O
+      input.heatModifier.modifier + // O
+      input.otherModifier; // O (free entry)
+}
+
+// Calculates the to-hit number for a melee attack (punch or kick).
+// Uses piloting skill as the base instead of gunnery skill.
+// All other modifiers (A, T, O, R) remain the same as a ranged attack.
+int calculateMeleeToHit(GatorInput input) {
+  return input.pilotingSkill + // G (piloting)
+      input.attackerMovement.modifier + // A
+      targetMovementModifier(input.targetHexesMoved) + // T (hex table)
+      input.targetMovementAdditional.modifier + // T (jumped/sprinted)
+      input.rangeBracket.modifier + // R (bracket)
+      input.minimumRange.modifier + // R (minimum range)
+      input.woodsSmoke.modifier + // O
+      (input.targetPartialCover ? 1 : 0) + // O
+      input.targetProne.modifier + // O
+      (input.attackerProne ? 2 : 0) + // O
+      input.secondaryTarget.modifier + // O
+      input.armCritical.modifier + // O
+      input.heatModifier.modifier + // O
+      input.otherModifier; // O (free entry)
 }

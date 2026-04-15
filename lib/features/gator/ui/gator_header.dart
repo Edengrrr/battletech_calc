@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:battletech_calc/features/gator/logic/gator_provider.dart';
+import 'package:battletech_calc/features/gator/logic/gator_calculator.dart';
 
-// Which GATOR letter is currently selected for the input panel.
+// Enum representing which GATOR letter is currently selected.
+// Used by GatorScreen to determine which input panel to display.
 enum GatorSection { g, a, t, o, r }
 
+// GatorHeader displays the full top section of the GATOR calculator screen:
+//   - A row of tappable letter circles (G, A, T, O, R)
+//   - A row of smaller circles showing each letter's current modifier value
+//   - Two stacked total circles on the right (Ranged and Melee)
+//
+// The selected letter is highlighted. Tapping a letter calls onSectionTap
+// so the parent screen can swap the input panel below.
 class GatorHeader extends ConsumerWidget {
+  // Which GATOR letter is currently active/highlighted.
   final GatorSection selected;
+
+  // Callback fired when the user taps a different letter.
   final ValueChanged<GatorSection> onSectionTap;
 
   const GatorHeader({
@@ -18,48 +30,98 @@ class GatorHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final input = ref.watch(gatorProvider);
-    final toHit = ref.watch(toHitProvider);
+    final rangedTotal = ref.watch(toHitProvider);
+    final meleeTotal = ref.watch(meleeToHitProvider);
 
-    // Modifier value shown under each letter
+    // The modifier value displayed under each GATOR letter circle.
+    // Index matches GatorSection.index (g=0, a=1, t=2, o=3, r=4).
     final values = [
+      // G — gunnery skill (the base ranged value)
       input.gunnerySkill,
+      // A — attacker movement modifier
       input.attackerMovement.modifier,
-      // target movement is a combination of hex modifier + additional
-      0, // placeholder for T — we'll calculate this shortly
-      0, // placeholder for O — sum of all O modifiers
+      // T — hex table modifier + jumped/sprinted additional modifier
+      targetMovementModifier(input.targetHexesMoved) +
+          input.targetMovementAdditional.modifier,
+      // O — sum of all other modifiers
+      input.woodsSmoke.modifier +
+          (input.targetPartialCover ? 1 : 0) +
+          input.targetProne.modifier +
+          (input.attackerProne ? 2 : 0) +
+          input.secondaryTarget.modifier +
+          input.armCritical.modifier +
+          input.heatModifier.modifier +
+          input.otherModifier,
+      // R — range bracket + minimum range penalty
       input.rangeBracket.modifier + input.minimumRange.modifier,
     ];
 
-    return Row(
+    return Column(
       children: [
-        ...GatorSection.values.map((section) {
-          final index = section.index;
-          final isSelected = selected == section;
-          final label = section.name.toUpperCase();
+        // Top section — tappable GATOR letter circles and their modifier values.
+        Row(
+          children: GatorSection.values.map((section) {
+            final index = section.index;
+            final isSelected = selected == section;
+            final label = section.name.toUpperCase();
 
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => onSectionTap(section),
-              child: Column(
-                children: [
-                  _Circle(label: label, highlighted: isSelected),
-                  const SizedBox(height: 4),
-                  _Circle(
-                    label: '${values[index]}',
-                    highlighted: false,
-                    small: true,
-                  ),
-                ],
+            return Expanded(
+              child: GestureDetector(
+                onTap: () => onSectionTap(section),
+                child: Column(
+                  children: [
+                    // Large letter circle — highlighted when this section is active.
+                    _Circle(label: label, highlighted: isSelected),
+                    const SizedBox(height: 4),
+                    // Small value circle — shows the current modifier for this section.
+                    _Circle(
+                      label: '${values[index]}',
+                      highlighted: false,
+                      small: true,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
-        // Final value
-        Column(
+            );
+          }).toList(),
+        ),
+
+        // Divider separating the inputs from the output totals.
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: Divider(height: 1),
+        ),
+
+        // Bottom section — Ranged and Melee to-hit totals.
+        // These are read-only outputs, not tappable.
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const Text('Total', style: TextStyle(fontSize: 12)),
-            const SizedBox(height: 4),
-            _Circle(label: '$toHit', highlighted: true, small: true),
+            // Ranged total — gunnery skill + all modifiers.
+            Row(
+              children: [
+                const Text('Ranged', style: TextStyle(fontSize: 12)),
+                const SizedBox(width: 8),
+                _Circle(label: '$rangedTotal', highlighted: true, small: true),
+              ],
+            ),
+
+            // Melee total — piloting skill + all modifiers.
+            // Kick attacks subtract 2 from this number.
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('Melee', style: TextStyle(fontSize: 12)),
+                    Text('(kick -2)', style: TextStyle(fontSize: 10)),
+                  ],
+                ),
+                const SizedBox(width: 8),
+                _Circle(label: '$meleeTotal', highlighted: true, small: true),
+              ],
+            ),
           ],
         ),
       ],
@@ -67,6 +129,10 @@ class GatorHeader extends ConsumerWidget {
   }
 }
 
+// A circular display widget used for both the GATOR letter circles
+// and the value/total sub-circles.
+// highlighted = filled with the primary theme color (used for selected letter and totals)
+// small = smaller diameter, used for value and total circles
 class _Circle extends StatelessWidget {
   final String label;
   final bool highlighted;

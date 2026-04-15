@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 // ---------------------------------------------------------------------------
 // GATOR INPUT DATA MODEL
 // ---------------------------------------------------------------------------
@@ -164,6 +162,9 @@ class GatorInput {
   // G — the attacker's gunnery skill from their record sheet (typically 4).
   final int gunnerySkill;
 
+  // G — the attacker's piloting skill, used for melee (punch/kick) attacks.
+  final int pilotingSkill;
+
   // A — how the attacking unit moved this turn.
   final AttackerMovement attackerMovement;
 
@@ -206,6 +207,7 @@ class GatorInput {
 
   const GatorInput({
     this.gunnerySkill = 4,
+    this.pilotingSkill = 5,
     this.attackerMovement = AttackerMovement.stationary,
     this.targetHexesMoved = 0,
     this.targetMovementAdditional = TargetMovementAdditional.none,
@@ -227,6 +229,7 @@ class GatorInput {
   // Example: state.copyWith(gunnerySkill: 3) updates only gunnery skill.
   GatorInput copyWith({
     int? gunnerySkill,
+    int? pilotingSkill,
     AttackerMovement? attackerMovement,
     int? targetHexesMoved,
     TargetMovementAdditional? targetMovementAdditional,
@@ -243,6 +246,7 @@ class GatorInput {
   }) {
     return GatorInput(
       gunnerySkill: gunnerySkill ?? this.gunnerySkill,
+      pilotingSkill: pilotingSkill ?? this.pilotingSkill,
       attackerMovement: attackerMovement ?? this.attackerMovement,
       targetHexesMoved: targetHexesMoved ?? this.targetHexesMoved,
       targetMovementAdditional:

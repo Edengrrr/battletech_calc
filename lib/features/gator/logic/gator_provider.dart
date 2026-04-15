@@ -35,6 +35,10 @@ class GatorNotifier extends Notifier<GatorInput> {
   void updateGunnerySkill(int value) =>
       state = state.copyWith(gunnerySkill: value);
 
+  // G — update the attacker's piloting skill (1–6), used for melee attacks.
+  void updatePilotingSkill(int value) =>
+      state = state.copyWith(pilotingSkill: value);
+
   // A — update the attacker's movement type for this turn.
   void updateAttackerMovement(AttackerMovement value) =>
       state = state.copyWith(attackerMovement: value);
@@ -100,10 +104,17 @@ final gatorProvider = NotifierProvider<GatorNotifier, GatorInput>(
   GatorNotifier.new,
 );
 
-// A derived (computed) provider that always reflects the current to-hit number.
+// Derived provider that always reflects the current to-hit number.
 // It watches gatorProvider and automatically recomputes whenever any input changes.
 // The UI watches this to display the result — it never calls calculateToHit() directly.
 final toHitProvider = Provider<int>((ref) {
   final input = ref.watch(gatorProvider);
   return calculateToHit(input);
+});
+
+// Derived provider that computes the melee to-hit number from current inputs.
+// Uses piloting skill as the base instead of gunnery skill.
+final meleeToHitProvider = Provider<int>((ref) {
+  final input = ref.watch(gatorProvider);
+  return calculateMeleeToHit(input);
 });
