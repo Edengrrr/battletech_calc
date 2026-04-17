@@ -1,11 +1,11 @@
 {
-    "name": "battletech_calc",
-    "short_name": "battletech_calc",
+    "name": "BattleTech To-Hit Calculator",
+    "short_name": "BattleTech Calc",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#1a1410",
+    "theme_color": "#D4870A",
+    "description": "Fast GATOR to-hit calculator for BattleTech. Enter your modifiers and get your target number instantly.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
