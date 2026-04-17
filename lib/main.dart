@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:battletech_calc/app/app_shell.dart';
@@ -39,6 +40,21 @@ class MyApp extends ConsumerWidget {
 
       // Driven by the settings provider; defaults to dark on first launch.
       themeMode: themeMode,
+
+      // On web with a wide window, constrain to phone proportions and center.
+      // On mobile the app fills the screen naturally at any phone size.
+      // On a narrow web window (< 600px) it also fills naturally.
+      builder: (context, child) {
+        if (kIsWeb && MediaQuery.of(context).size.width > 600) {
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 430),
+              child: child!,
+            ),
+          );
+        }
+        return child!;
+      },
 
       home: const AppShell(),
     );
